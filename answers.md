@@ -1,7 +1,7 @@
 # CMPS 2200 Assignment 4
 ## Answers
 
-**Name:**_________________________
+**Name:** Menwe Okafor
 
 Place all written answers from `assignment-04.md` here for easier grading.
 
@@ -17,9 +17,7 @@ P[X ≥ c·n²] ≤ (k·n lg n) / (c·n²) = O(lg n / n)
 That goes to 0 as n gets bigger, so Quicksort doing Ω(n²) comparisons becomes less likely for bigger inputs.
 
 
-- **1b. (5 pts)** What is the probability that Quicksort does $10^c n \lg n$
-comparisons, for a given $c>0$? What does this say about the
-deviation of the actual work from the expected work for Quicksort?
+- **1b. (5 pts)** What is the probability that Quicksort does $10^c n \lg n$ comparisons, for a given $c>0$? What does this say about the deviation of the actual work from the expected work for Quicksort?
 
 Set α = 10^c · n lg n and use E[X] ≈ n lg n:
 
@@ -33,13 +31,22 @@ So the chance of doing 10× more work than expected is at most 1/10, 100× more 
 
 - **2a. (10 pts)** Give an algorithm to improve the guaranteed success probability and state its work.
 
+A′ runs A, then checks the answer with C. If it's right, return it. If not, try again, up to k times. Each run is independent, so the chance that all k fail is (1−ε)^k. We want that to be at most 1−δ, so:
 
+k = ⌈ log(1−δ) / log(1−ε) ⌉
+
+Each try costs w(n) + v(n), which is O(w(n)) since v(n) ∈ O(w(n)). So the total work is:
+
+O( w(n) · log(1−δ) / log(1−ε) )
 
 
 - **2b. (6 pts)** Show how to convert $\mathcal{A}$ into an
   algorithm that always produces the correct result, but has an
   expected runtime that depends on $w(n)$ and a success probability
   $\epsilon$.
+
+  Keep running A and checking with C until the answer is correct, with no limit on tries. It only stops when it gets a correct answer, so it's always right. Each try succeeds with probability ε, so on average it takes 1/ε tries. That makes the expected work O(w(n) / ε).
+
 
 **3 Determinism versus Randomization in Quicksort**
 
@@ -69,3 +76,22 @@ On sorted input, fixed pivot quicksort becomes n² because the first element is 
 
 
 - **3c. (8 pts)** Compare the fastest of your sorting implementations to the Python sorting function `sorted`, conducting the tests in 3b above. 
+
+Sorted:
+|       n |   qsort-random |   timsort |
+|---------|----------------|-----------|
+|    1000 |          2.210 |     0.007 |
+|   10000 |         25.343 |     0.068 |
+|  100000 |        330.181 |     0.779 |
+| 1000000 |       3388.313 |     9.277 |
+Random
+|       n |   qsort-random |   timsort |
+|---------|----------------|-----------|
+|    1000 |          2.369 |     0.122 |
+|   10000 |         26.829 |     1.471 |
+|  100000 |        320.383 |    19.046 |
+| 1000000 |       3674.916 |   319.787 |
+
+On random input, `sorted` was about 11x faster. Both scale like n log n, so the gap is constant factors: Timsort is written in C and sorts in place, while my quicksort is Python and makes new lists every call.
+
+On sorted input, `sorted` was about 365x faster. Timsort takes advantage of parts of the list that are already in order, so a sorted list is basically O(n). Quicksort can't do that, so its times stayed the same.

@@ -63,7 +63,7 @@ def compare_sort(sizes=[100, 200, 400, 800]): #, 1600, 3200, 6400, 12800, 25600,
         mylist = list(range(size))
 
         # shuffles list if needed
-        random.shuffle(mylist)
+        #random.shuffle(mylist)
 
         result.append([
             len(mylist),
@@ -83,3 +83,22 @@ def print_results(results):
 
 random.seed()
 # print_results(compare_sort()) # ensure this is commented out when you submit
+
+def compare_timsort(sizes=[1000, 10000, 100000, 1000000]):
+    qsort_random_pivot = lambda a: qsort(a, lambda a: random.choice(a))
+    result = []
+    for size in sizes:
+        mylist = list(range(size))
+        #random.shuffle(mylist)    # comment this out for the sorted-input run
+        result.append([
+            len(mylist),
+            time_sort(qsort_random_pivot, mylist),
+            time_sort(sorted, mylist)
+        ])
+    return result
+
+def print_timsort_results(results):
+    print(tabulate.tabulate(results,
+                            headers=['n', 'qsort-random-pivot', 'timsort'],
+                            floatfmt=".3f",
+                            tablefmt="github"))
